@@ -22,6 +22,7 @@ import com.jme3.gde.scenecomposer.tools.MoveTool;
 import com.jme3.gde.scenecomposer.tools.RotateTool;
 import com.jme3.gde.scenecomposer.tools.ScaleTool;
 import com.jme3.gde.scenecomposer.tools.SelectTool;
+import com.jme3.gde.cinematics.tests.HelloWorld;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -95,6 +96,7 @@ public final class SceneComposerTopComponent extends TopComponent implements Sce
         sceneInfoPanel = new javax.swing.JPanel();
         sceneInfoLabel1 = new javax.swing.JLabel();
         sceneInfoLabel2 = new javax.swing.JLabel();
+        jButton4 = new javax.swing.JButton();
         jToolBar1 = new javax.swing.JToolBar();
         selectButton = new javax.swing.JToggleButton();
         moveButton = new javax.swing.JToggleButton();
@@ -148,12 +150,23 @@ public final class SceneComposerTopComponent extends TopComponent implements Sce
 
         org.openide.awt.Mnemonics.setLocalizedText(sceneInfoLabel2, org.openide.util.NbBundle.getMessage(SceneComposerTopComponent.class, "SceneComposerTopComponent.sceneInfoLabel2.text")); // NOI18N
 
+        org.openide.awt.Mnemonics.setLocalizedText(jButton4, org.openide.util.NbBundle.getMessage(SceneComposerTopComponent.class, "SceneComposerTopComponent.jButton4.text")); // NOI18N
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout sceneInfoPanelLayout = new javax.swing.GroupLayout(sceneInfoPanel);
         sceneInfoPanel.setLayout(sceneInfoPanelLayout);
         sceneInfoPanelLayout.setHorizontalGroup(
             sceneInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(sceneInfoLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(sceneInfoLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, sceneInfoPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton4)
+                .addGap(50, 50, 50))
         );
         sceneInfoPanelLayout.setVerticalGroup(
             sceneInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -161,6 +174,8 @@ public final class SceneComposerTopComponent extends TopComponent implements Sce
                 .addComponent(sceneInfoLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(sceneInfoLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton4)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -494,6 +509,7 @@ public final class SceneComposerTopComponent extends TopComponent implements Sce
                                 .addComponent(jLabel6)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jButton2)
+                                .addGap(0, 0, 0)
                                 .addComponent(jButton3))
                             .addGroup(jPanel4Layout.createSequentialGroup()
                                 .addComponent(jLabel5)
@@ -658,6 +674,11 @@ private void jToggleSelectTerrainActionPerformed(java.awt.event.ActionEvent evt)
 private void jToggleSelectGeomActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleSelectGeomActionPerformed
     toolController.setSelectGeometries(jToggleSelectGeom.isSelected());
 }//GEN-LAST:event_jToggleSelectGeomActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        System.out.println(new HelloWorld().getMessage());
+    }//GEN-LAST:event_jButton4ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton camToCursorSelectionButton;
     private javax.swing.JButton createPhysicsMeshButton;
@@ -668,6 +689,7 @@ private void jToggleSelectGeomActionPerformed(java.awt.event.ActionEvent evt) {/
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
