@@ -5,6 +5,7 @@
 package com.jme3.gde.scenecomposer;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.cinematic.Cinematic;
 import com.jme3.effect.ParticleEmitter;
 import com.jme3.gde.core.assets.AssetDataObject;
 import com.jme3.gde.core.assets.ProjectAssetManager;
@@ -23,6 +24,7 @@ import com.jme3.gde.scenecomposer.tools.RotateTool;
 import com.jme3.gde.scenecomposer.tools.ScaleTool;
 import com.jme3.gde.scenecomposer.tools.SelectTool;
 import com.jme3.gde.cinematics.tests.HelloWorld;
+import com.jme3.gde.cinematics.tests.TestCinematic;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -210,10 +212,10 @@ public final class SceneComposerTopComponent extends TopComponent implements Sce
                         .addComponent(jButton5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButton4))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         jToolBar1.setBackground(new java.awt.Color(204, 204, 204));
@@ -715,6 +717,19 @@ private void jToggleSelectGeomActionPerformed(java.awt.event.ActionEvent evt) {/
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         System.out.println(new HelloWorld().getMessage());
         Spatial selectedSpatial = toolController.getSelectedSpatial();
+        System.out.println("Applying Cinematic Clip to : " + selectedSpatial.getName());
+        Cinematic cinematic=null;
+        cinematic = new TestCinematic().createCinematic(selectedSpatial, (Node)SceneApplication.getApplication().getCurrentSceneRequest().getRootNode());
+        if(cinematic!=null)
+        {
+            System.out.println("Cinematic succesfully reciewed by SceneComposerTopComponent.Attaching it to stateManager");
+         //   SceneApplication.getApplication().getStateManager().getState(Spatial.class)
+            SceneApplication.getApplication().getStateManager().attach(cinematic);
+            System.out.println("Playing");
+            cinematic.play();
+        }
+        else
+            System.out.println("Cinematic not recieved bby SceneComposerTopComponent");
         
     }//GEN-LAST:event_jButton4ActionPerformed
 
