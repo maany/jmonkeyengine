@@ -7,6 +7,7 @@ package com.jme3.gde.scenecomposer;
 import com.jme3.asset.AssetManager;
 import com.jme3.cinematic.Cinematic;
 import com.jme3.effect.ParticleEmitter;
+import com.jme3.gde.cinematics.tests.CinematicManager;
 import com.jme3.gde.core.assets.AssetDataObject;
 import com.jme3.gde.core.assets.ProjectAssetManager;
 import com.jme3.gde.core.assets.SpatialAssetDataObject;
@@ -33,6 +34,8 @@ import java.util.Collection;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 import javax.swing.ButtonGroup;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.border.TitledBorder;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
@@ -84,6 +87,7 @@ public final class SceneComposerTopComponent extends TopComponent implements Sce
         setToolTipText(NbBundle.getMessage(SceneComposerTopComponent.class, "HINT_SceneComposerTopComponent"));
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));
         result = Utilities.actionsGlobalContext().lookupResult(JmeSpatial.class);
+        initCinematicList();
     }
 
     /** This method is called from within the constructor to
@@ -98,12 +102,6 @@ public final class SceneComposerTopComponent extends TopComponent implements Sce
         sceneInfoPanel = new javax.swing.JPanel();
         sceneInfoLabel1 = new javax.swing.JLabel();
         sceneInfoLabel2 = new javax.swing.JLabel();
-        jButton4 = new javax.swing.JButton();
-        jSlider1 = new javax.swing.JSlider();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList();
-        jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
         jToolBar1 = new javax.swing.JToolBar();
         selectButton = new javax.swing.JToggleButton();
         moveButton = new javax.swing.JToggleButton();
@@ -130,6 +128,8 @@ public final class SceneComposerTopComponent extends TopComponent implements Sce
         showGridToggleButton = new javax.swing.JToggleButton();
         jSeparator1 = new javax.swing.JToolBar.Separator();
         jPanel3 = new javax.swing.JPanel();
+        jButton4 = new javax.swing.JButton();
+        cinematicLoader = new javax.swing.JComboBox();
         jPanel4 = new javax.swing.JPanel();
         jToolBar2 = new javax.swing.JToolBar();
         createPhysicsMeshButton = new javax.swing.JButton();
@@ -157,65 +157,20 @@ public final class SceneComposerTopComponent extends TopComponent implements Sce
 
         org.openide.awt.Mnemonics.setLocalizedText(sceneInfoLabel2, org.openide.util.NbBundle.getMessage(SceneComposerTopComponent.class, "SceneComposerTopComponent.sceneInfoLabel2.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(jButton4, org.openide.util.NbBundle.getMessage(SceneComposerTopComponent.class, "SceneComposerTopComponent.jButton4.text")); // NOI18N
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
-            }
-        });
-
-        jList1.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
-        jScrollPane1.setViewportView(jList1);
-
-        org.openide.awt.Mnemonics.setLocalizedText(jButton5, org.openide.util.NbBundle.getMessage(SceneComposerTopComponent.class, "SceneComposerTopComponent.jButton5.text")); // NOI18N
-
-        org.openide.awt.Mnemonics.setLocalizedText(jButton6, org.openide.util.NbBundle.getMessage(SceneComposerTopComponent.class, "SceneComposerTopComponent.jButton6.text")); // NOI18N
-
         javax.swing.GroupLayout sceneInfoPanelLayout = new javax.swing.GroupLayout(sceneInfoPanel);
         sceneInfoPanel.setLayout(sceneInfoPanelLayout);
         sceneInfoPanelLayout.setHorizontalGroup(
             sceneInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(sceneInfoPanelLayout.createSequentialGroup()
-                .addGroup(sceneInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(sceneInfoPanelLayout.createSequentialGroup()
-                        .addComponent(sceneInfoLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, sceneInfoPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(sceneInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                        .addGap(31, 31, 31)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(sceneInfoLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(sceneInfoLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(sceneInfoLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         sceneInfoPanelLayout.setVerticalGroup(
             sceneInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(sceneInfoPanelLayout.createSequentialGroup()
-                .addGroup(sceneInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(sceneInfoPanelLayout.createSequentialGroup()
-                        .addComponent(sceneInfoLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(sceneInfoLabel2))
-                    .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(11, 11, 11)
-                .addGroup(sceneInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(sceneInfoPanelLayout.createSequentialGroup()
-                        .addComponent(jButton5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton4))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addComponent(sceneInfoLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(sceneInfoLabel2)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jToolBar1.setBackground(new java.awt.Color(204, 204, 204));
@@ -430,15 +385,28 @@ public final class SceneComposerTopComponent extends TopComponent implements Sce
 
         jPanel3.setBackground(new java.awt.Color(204, 204, 204));
 
+        org.openide.awt.Mnemonics.setLocalizedText(jButton4, org.openide.util.NbBundle.getMessage(SceneComposerTopComponent.class, "SceneComposerTopComponent.jButton4.text")); // NOI18N
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 171, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addComponent(cinematicLoader, 0, 86, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton4)
+                .addGap(22, 22, 22))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 21, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(cinematicLoader, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         jToolBar1.add(jPanel3);
@@ -715,7 +683,7 @@ private void jToggleSelectGeomActionPerformed(java.awt.event.ActionEvent evt) {/
 }//GEN-LAST:event_jToggleSelectGeomActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        System.out.println(new HelloWorld().getMessage());
+/*        System.out.println(new HelloWorld().getMessage());
         Spatial selectedSpatial = toolController.getSelectedSpatial();
         System.out.println("Applying Cinematic Clip to : " + selectedSpatial.getName());
         Cinematic cinematic=null;
@@ -730,11 +698,15 @@ private void jToggleSelectGeomActionPerformed(java.awt.event.ActionEvent evt) {/
         }
         else
             System.out.println("Cinematic not recieved bby SceneComposerTopComponent");
+        */
+        
+    CinematicManager.getInstance().loadCinematic(cinematicLoader.getSelectedItem().toString());
         
     }//GEN-LAST:event_jButton4ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton camToCursorSelectionButton;
+    private javax.swing.JComboBox cinematicLoader;
     private javax.swing.JButton createPhysicsMeshButton;
     private javax.swing.JButton cursorToSelectionButton;
     private javax.swing.JButton emitButton;
@@ -744,8 +716,6 @@ private void jToggleSelectGeomActionPerformed(java.awt.event.ActionEvent evt) {/
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -753,10 +723,8 @@ private void jToggleSelectGeomActionPerformed(java.awt.event.ActionEvent evt) {/
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JList jList1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JToolBar.Separator jSeparator2;
     private javax.swing.JToolBar.Separator jSeparator3;
@@ -765,7 +733,6 @@ private void jToggleSelectGeomActionPerformed(java.awt.event.ActionEvent evt) {/
     private javax.swing.JSeparator jSeparator6;
     private javax.swing.JToolBar.Separator jSeparator7;
     private javax.swing.JToolBar.Separator jSeparator8;
-    private javax.swing.JSlider jSlider1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JToggleButton jToggleGrid;
     private javax.swing.JToggleButton jToggleScene;
@@ -1175,5 +1142,10 @@ private void jToggleSelectGeomActionPerformed(java.awt.event.ActionEvent evt) {/
     public void displayInfo(String info) {
         Message msg = new NotifyDescriptor.Message(info);
         DialogDisplayer.getDefault().notifyLater(msg);
+    }
+    public void initCinematicList()
+    {
+        ComboBoxModel model = new DefaultComboBoxModel(CinematicManager.getInstance().getCinematicsAsStringArray());
+        cinematicLoader.setModel(model);
     }
 }
