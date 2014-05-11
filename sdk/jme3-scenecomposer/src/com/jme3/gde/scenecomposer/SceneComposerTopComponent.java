@@ -7,6 +7,7 @@ package com.jme3.gde.scenecomposer;
 import com.jme3.asset.AssetManager;
 import com.jme3.cinematic.Cinematic;
 import com.jme3.effect.ParticleEmitter;
+import com.jme3.gde.cinematics.tests.CinematicEditorPrototype;
 import com.jme3.gde.cinematics.tests.CinematicManager;
 import com.jme3.gde.core.assets.AssetDataObject;
 import com.jme3.gde.core.assets.ProjectAssetManager;
@@ -87,6 +88,7 @@ public final class SceneComposerTopComponent extends TopComponent implements Sce
         setToolTipText(NbBundle.getMessage(SceneComposerTopComponent.class, "HINT_SceneComposerTopComponent"));
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));
         result = Utilities.actionsGlobalContext().lookupResult(JmeSpatial.class);
+        System.out.println("RUNNING CINEMATIC INITIALIZER");
         initCinematicList();
     }
 
@@ -128,8 +130,9 @@ public final class SceneComposerTopComponent extends TopComponent implements Sce
         showGridToggleButton = new javax.swing.JToggleButton();
         jSeparator1 = new javax.swing.JToolBar.Separator();
         jPanel3 = new javax.swing.JPanel();
-        jButton4 = new javax.swing.JButton();
         cinematicLoader = new javax.swing.JComboBox();
+        jButton4 = new javax.swing.JButton();
+        addToCurrentCinematic = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jToolBar2 = new javax.swing.JToolBar();
         createPhysicsMeshButton = new javax.swing.JButton();
@@ -385,10 +388,26 @@ public final class SceneComposerTopComponent extends TopComponent implements Sce
 
         jPanel3.setBackground(new java.awt.Color(204, 204, 204));
 
+        cinematicLoader.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                cinematicLoaderFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                cinematicLoaderFocusLost(evt);
+            }
+        });
+
         org.openide.awt.Mnemonics.setLocalizedText(jButton4, org.openide.util.NbBundle.getMessage(SceneComposerTopComponent.class, "SceneComposerTopComponent.jButton4.text")); // NOI18N
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(addToCurrentCinematic, org.openide.util.NbBundle.getMessage(SceneComposerTopComponent.class, "SceneComposerTopComponent.addToCurrentCinematic.text")); // NOI18N
+        addToCurrentCinematic.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addToCurrentCinematicActionPerformed(evt);
             }
         });
 
@@ -397,16 +416,19 @@ public final class SceneComposerTopComponent extends TopComponent implements Sce
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addComponent(cinematicLoader, 0, 86, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(cinematicLoader, 0, 50, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton4)
-                .addGap(22, 22, 22))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(addToCurrentCinematic)
+                .addGap(15, 15, 15))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(cinematicLoader, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(cinematicLoader, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(addToCurrentCinematic))
         );
 
         jToolBar1.add(jPanel3);
@@ -700,11 +722,29 @@ private void jToggleSelectGeomActionPerformed(java.awt.event.ActionEvent evt) {/
             System.out.println("Cinematic not recieved bby SceneComposerTopComponent");
         */
         
-    CinematicManager.getInstance().loadCinematic(cinematicLoader.getSelectedItem().toString());
-        
+        System.out.println("SceneComposer : selected element : " + cinematicLoader.getSelectedItem().toString());
+        CinematicManager.getInstance().loadCinematic(cinematicLoader.getSelectedItem().toString());
+        initCinematicList();
     }//GEN-LAST:event_jButton4ActionPerformed
 
+    private void cinematicLoaderFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cinematicLoaderFocusGained
+        initCinematicList();
+    }//GEN-LAST:event_cinematicLoaderFocusGained
+
+    private void cinematicLoaderFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cinematicLoaderFocusLost
+       // initCinematicList();
+    }//GEN-LAST:event_cinematicLoaderFocusLost
+
+    private void addToCurrentCinematicActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addToCurrentCinematicActionPerformed
+        Spatial selected = toolController.getSelectedSpatial();
+        //toolController.getRootNode().getChildren().findChild(selected.getName());
+       CinematicEditorPrototype editor =  CinematicManager.getInstance().getCinematic(cinematicLoader.getSelectedItem().toString());
+       editor.addSpatialObject(selected);
+        
+    }//GEN-LAST:event_addToCurrentCinematicActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addToCurrentCinematic;
     private javax.swing.JButton camToCursorSelectionButton;
     private javax.swing.JComboBox cinematicLoader;
     private javax.swing.JButton createPhysicsMeshButton;
@@ -1145,7 +1185,13 @@ private void jToggleSelectGeomActionPerformed(java.awt.event.ActionEvent evt) {/
     }
     public void initCinematicList()
     {
+        int index = cinematicLoader.getSelectedIndex();
         ComboBoxModel model = new DefaultComboBoxModel(CinematicManager.getInstance().getCinematicsAsStringArray());
         cinematicLoader.setModel(model);
+        cinematicLoader.setSelectedIndex(index);
+    }
+    public SceneComposerToolController getToolController()
+    {
+        return toolController;
     }
 }

@@ -28,30 +28,64 @@ public class CinematicManager {
     }
     public void loadCinematic(String name)
     {
+        System.out.println("Cinematic Manager - loading Cinematic:The requested name is " + name);
         if(name.equals("New")){
-            
+            System.out.println("Cinematic Manager: Detected New Clip : ");
             CinematicEditorPrototype cinematic = new CinematicEditorPrototype();
             cinematics.add(cinematic);
+            cinematic.setCinematicName("Untitled Clip:" + cinematics.size());
+            System.out.println("Clip Name" + cinematic.getCinematicName());
             cinematic.setVisible(true);
             return;
         }
         for(CinematicEditorPrototype cinematic:cinematics)
         {
             if(cinematic.getCinematicName().equals(name))
+            {
             cinematic.setVisible(true);
-            else
+                
+            }
+            else{
             cinematic.setVisible(false);
+            System.out.println(cinematic.getCinematicName() + "is not equal to " + name);
+            }
         }
     }
     public String[] getCinematicsAsStringArray()
     {
+        System.out.println("CinematicManager : Request is here to get the arraylist as string");
         String[] list = new String[cinematics.size()+1];
         int i;
-        for(i=0;i<cinematics.size();i++)
+        
+        for(i=0;i<list.length;i++)
         {
-            list[i] = cinematics.get(i).getCinematicName();
+            if(i==0)
+            {
+                list[i]="New";
+                continue;
+            }
+            list[i] = cinematics.get(i-1).getCinematicName();
         }
-        list[i+1] = "New";
+        System.out.println("List : " + Arrays.toString(list) + " Size: " + list.length);
+        //list[0] = "New";
         return list;
+        
+    }
+    public CinematicEditorPrototype getCinematic(String name)
+    {
+        if(name.equals("New"))
+        {
+            loadCinematic(name);
+            CinematicEditorPrototype temp = cinematics.get(cinematics.size()-1);
+            return temp;
+        }
+        else {    
+            for(CinematicEditorPrototype temp: cinematics)
+            {
+                if(temp.getCinematicName().equals(name))
+                    return temp;
+            }
+        }
+        return null;
     }
 }

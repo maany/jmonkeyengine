@@ -7,16 +7,26 @@
 package com.jme3.gde.cinematics.tests;
 
 import com.jme3.cinematic.Cinematic;
+import com.jme3.scene.Spatial;
+import java.util.Vector;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 /**
  *
  * @author MAYANK
  */
 public class CinematicEditorPrototype extends javax.swing.JFrame {
-    private Integer durationVal;
+    
     private Cinematic cinematic;
     private String cinematicName;
-    private boolean sync = false;
+    private  FixedColumnTable fct;
+    
+    Integer durationValue = 30;
+    Integer currentFrameValue = 0;
+    boolean loaded = false;
 
     public String getCinematicName() {
         return cinematicName;
@@ -24,6 +34,7 @@ public class CinematicEditorPrototype extends javax.swing.JFrame {
 
     public void setCinematicName(String cinematicName) {
         this.cinematicName = cinematicName;
+        clipName.setText(cinematicName);
     }
 
     public Cinematic getCinematic() {
@@ -38,9 +49,52 @@ public class CinematicEditorPrototype extends javax.swing.JFrame {
      */
     public CinematicEditorPrototype() {
         initComponents();
-        changeDuration();
+        currentFrameValue=1;
+        currentFrame.setValue(currentFrameValue);
+        initTimeline();
+        
+        timeSlider.setMaximum(durationValue);
+        duration.setValue(durationValue);
+        timeSlider.setValue(1);
+        timeSlider.setMinimum(1);
+        
+        
+        loaded = true;
     }
 
+    private void initTimeline() {
+        DefaultTableModel model = (DefaultTableModel) timeline.getModel();
+        model.setColumnCount(durationValue+1);
+        int cols = model.getColumnCount();
+        System.out.println("ColumnCount : " + cols);
+        TableColumnModel columnModel = timeline.getColumnModel();
+        
+        TableColumn layersColumn = columnModel.getColumn(0);
+        layersColumn.setHeaderValue("Layers");
+        layersColumn.setMinWidth(80);
+        layersColumn.setPreferredWidth(150);
+        
+        for(int i=1;i<cols;i++)
+        {
+            TableColumn column = columnModel.getColumn(i);
+            column.setHeaderValue(i);
+            System.out.println("running for " + i);
+            column.setMinWidth(30);
+            // column.setMaxWidth(30);
+            column.setPreferredWidth(30);
+        }
+        System.out.println("success");
+        timeline.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        
+       fct = new FixedColumnTable(0,timelineContainer);
+    }
+    public void addSpatialObject(Spatial spat){
+        DefaultTableModel model = (DefaultTableModel)timeline.getModel();
+        model.addRow(new Vector<Object>());
+        System.out.println("Cinematic Editor: New Row created");
+        DefaultTableModel fixedModel =  (DefaultTableModel) fct.getFixedTable().getModel();
+        
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -50,35 +104,35 @@ public class CinematicEditorPrototype extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        clipName = new javax.swing.JLabel();
+        yoyo = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
-        jToggleButton1 = new javax.swing.JToggleButton();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        AnimationSwitch = new javax.swing.JToggleButton();
+        addKeyframe = new javax.swing.JButton();
+        removeKeyFrame = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         duration = new javax.swing.JSpinner();
         jLabel2 = new javax.swing.JLabel();
-        jButton5 = new javax.swing.JButton();
-        jToggleButton2 = new javax.swing.JToggleButton();
+        stop = new javax.swing.JButton();
+        playPause = new javax.swing.JToggleButton();
         jPanel3 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        timeline = new javax.swing.JTable();
         timeSlider = new javax.swing.JSlider();
-        timeSliderValue = new javax.swing.JSpinner();
+        currentFrame = new javax.swing.JSpinner();
         jLabel3 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        timelineContainer = new javax.swing.JScrollPane();
+        timeline = new javax.swing.JTable();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        clipName = new javax.swing.JTextField();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        org.openide.awt.Mnemonics.setLocalizedText(clipName, org.openide.util.NbBundle.getMessage(CinematicEditorPrototype.class, "CinematicEditorPrototype.clipName.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(yoyo, org.openide.util.NbBundle.getMessage(CinematicEditorPrototype.class, "CinematicEditorPrototype.yoyo.text")); // NOI18N
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(CinematicEditorPrototype.class, "CinematicEditorPrototype.jPanel1.border.title"))); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(jToggleButton1, org.openide.util.NbBundle.getMessage(CinematicEditorPrototype.class, "CinematicEditorPrototype.jToggleButton1.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(AnimationSwitch, org.openide.util.NbBundle.getMessage(CinematicEditorPrototype.class, "CinematicEditorPrototype.AnimationSwitch.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(jButton1, org.openide.util.NbBundle.getMessage(CinematicEditorPrototype.class, "CinematicEditorPrototype.jButton1.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(addKeyframe, org.openide.util.NbBundle.getMessage(CinematicEditorPrototype.class, "CinematicEditorPrototype.addKeyframe.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(jButton2, org.openide.util.NbBundle.getMessage(CinematicEditorPrototype.class, "CinematicEditorPrototype.jButton2.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(removeKeyFrame, org.openide.util.NbBundle.getMessage(CinematicEditorPrototype.class, "CinematicEditorPrototype.removeKeyFrame.text")); // NOI18N
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -86,20 +140,20 @@ public class CinematicEditorPrototype extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(AnimationSwitch, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(14, 14, 14)
-                .addComponent(jButton1)
+                .addComponent(addKeyframe)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2)
+                .addComponent(removeKeyFrame)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jToggleButton1)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(AnimationSwitch)
+                    .addComponent(addKeyframe)
+                    .addComponent(removeKeyFrame))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
@@ -114,14 +168,14 @@ public class CinematicEditorPrototype extends javax.swing.JFrame {
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel2, org.openide.util.NbBundle.getMessage(CinematicEditorPrototype.class, "CinematicEditorPrototype.jLabel2.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(jButton5, org.openide.util.NbBundle.getMessage(CinematicEditorPrototype.class, "CinematicEditorPrototype.jButton5.text")); // NOI18N
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
+        org.openide.awt.Mnemonics.setLocalizedText(stop, org.openide.util.NbBundle.getMessage(CinematicEditorPrototype.class, "CinematicEditorPrototype.stop.text")); // NOI18N
+        stop.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
+                stopActionPerformed(evt);
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(jToggleButton2, org.openide.util.NbBundle.getMessage(CinematicEditorPrototype.class, "CinematicEditorPrototype.jToggleButton2.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(playPause, org.openide.util.NbBundle.getMessage(CinematicEditorPrototype.class, "CinematicEditorPrototype.playPause.text")); // NOI18N
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -131,11 +185,11 @@ public class CinematicEditorPrototype extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(duration, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(duration, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jToggleButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(playPause, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton5))
+                .addComponent(stop))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -143,25 +197,12 @@ public class CinematicEditorPrototype extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(duration, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton5)
-                    .addComponent(jToggleButton2))
+                    .addComponent(stop)
+                    .addComponent(playPause))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), org.openide.util.NbBundle.getMessage(CinematicEditorPrototype.class, "CinematicEditorPrototype.jPanel3.border.title"))); // NOI18N
-
-        timeline.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane1.setViewportView(timeline);
 
         timeSlider.setMajorTickSpacing(1);
         timeSlider.setPaintLabels(true);
@@ -175,41 +216,84 @@ public class CinematicEditorPrototype extends javax.swing.JFrame {
             }
         });
 
-        timeSliderValue.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(0), Integer.valueOf(0), null, Integer.valueOf(1)));
+        currentFrame.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(1), Integer.valueOf(1), null, Integer.valueOf(1)));
+        currentFrame.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                currentFrameStateChanged(evt);
+            }
+        });
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel3, org.openide.util.NbBundle.getMessage(CinematicEditorPrototype.class, "CinematicEditorPrototype.jLabel3.text")); // NOI18N
+
+        timeline.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        timeline.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                timelineMousePressed(evt);
+            }
+        });
+        timelineContainer.setViewportView(timeline);
+
+        org.openide.awt.Mnemonics.setLocalizedText(jButton1, org.openide.util.NbBundle.getMessage(CinematicEditorPrototype.class, "CinematicEditorPrototype.jButton1.text")); // NOI18N
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(jButton2, org.openide.util.NbBundle.getMessage(CinematicEditorPrototype.class, "CinematicEditorPrototype.jButton2.text")); // NOI18N
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(timeSliderValue, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(timeSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 388, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1))
-                .addContainerGap())
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(7, 7, 7)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(currentFrame, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(timeSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 388, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(27, 27, 27))
+            .addComponent(timelineContainer)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addComponent(jButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton2)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(timeSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(timeSliderValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel3)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(currentFrame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3)))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(timeSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addComponent(timelineContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2)))
         );
 
-        jTextField1.setText(org.openide.util.NbBundle.getMessage(CinematicEditorPrototype.class, "CinematicEditorPrototype.jTextField1.text")); // NOI18N
+        clipName.setText(org.openide.util.NbBundle.getMessage(CinematicEditorPrototype.class, "CinematicEditorPrototype.clipName.text")); // NOI18N
+        clipName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clipNameActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -222,40 +306,101 @@ public class CinematicEditorPrototype extends javax.swing.JFrame {
             .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGroup(layout.createSequentialGroup()
                 .addGap(197, 197, 197)
-                .addComponent(clipName, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(yoyo, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(clipName, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(8, 8, 8)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(clipName)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(yoyo)
+                    .addComponent(clipName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 178, Short.MAX_VALUE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+    private void stopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton5ActionPerformed
+    }//GEN-LAST:event_stopActionPerformed
 
     private void timeSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_timeSliderStateChanged
-        timeSliderValue.setValue(timeSlider.getValue());
+        currentFrame.setValue(timeSlider.getValue());
+        
     }//GEN-LAST:event_timeSliderStateChanged
 
     private void durationStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_durationStateChanged
-        changeDuration();
+        if(loaded)
+        {
+        Integer temp = new Integer(duration.getValue().toString());
+            if(currentFrameValue>temp) {
+            currentFrameValue=temp;
+            }
+        
+            if(durationValue>temp)
+            {   
+                for(int i=durationValue;i>temp;i--)
+                {
+                    timeline.removeColumn(timeline.getColumnModel().getColumn(i));
+                }
+            
+            }else 
+            {
+                int newCols = timeline.getColumnModel().getColumnCount() + (temp-durationValue)+1;
+                DefaultTableModel model = (DefaultTableModel) timeline.getModel();
+                model.setColumnCount(newCols);
+                
+                for(int i=durationValue+1;i<=temp;i++)
+                 {
+                    TableColumn column = new TableColumn(i);
+                    column.setPreferredWidth(30);
+                    column.setMinWidth(30);
+                    column.setHeaderValue(i);
+                    System.out.println("Adding Column");
+                    //timeline.getColumnModel().addColumn(column);
+                    timeline.addColumn(column);
+                }
+            }
+        
+            durationValue = temp;
+            currentFrame.setValue(currentFrameValue);
+            timeSlider.setValue(currentFrameValue);
+            timeSlider.setMaximum(durationValue);
+        }               
     }//GEN-LAST:event_durationStateChanged
+
+    private void timelineMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_timelineMousePressed
+        int selectedRow = timeline.getSelectedColumn();
+        currentFrameValue = selectedRow;
+        currentFrame.setValue(selectedRow);
+        timeSlider.setValue(selectedRow);
+    }//GEN-LAST:event_timelineMousePressed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void clipNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clipNameActionPerformed
+        if(loaded)
+        {
+            if(!clipName.getText().equals(cinematicName))
+                this.setCinematicName(clipName.getText());
+        }
+    }//GEN-LAST:event_clipNameActionPerformed
+
+    private void currentFrameStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_currentFrameStateChanged
+        currentFrameValue = new Integer(currentFrame.getValue().toString());
+        timeSlider.setValue(currentFrameValue);
+    }//GEN-LAST:event_currentFrameStateChanged
 
     /**
      * @param args the command line arguments
@@ -293,41 +438,26 @@ public class CinematicEditorPrototype extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel clipName;
+    private javax.swing.JToggleButton AnimationSwitch;
+    private javax.swing.JButton addKeyframe;
+    private javax.swing.JTextField clipName;
+    private javax.swing.JSpinner currentFrame;
     private javax.swing.JSpinner duration;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JToggleButton jToggleButton1;
-    private javax.swing.JToggleButton jToggleButton2;
+    private javax.swing.JToggleButton playPause;
+    private javax.swing.JButton removeKeyFrame;
+    private javax.swing.JButton stop;
     private javax.swing.JSlider timeSlider;
-    private javax.swing.JSpinner timeSliderValue;
     private javax.swing.JTable timeline;
+    private javax.swing.JScrollPane timelineContainer;
+    private javax.swing.JLabel yoyo;
     // End of variables declaration//GEN-END:variables
 
-    private void changeDuration() {
-        durationVal =  (Integer)duration.getValue();
-        if(timeSlider.getValue()>durationVal)
-            changeSlider(0);
-        timeSlider.setMaximum(durationVal);
-    }
-
-    private void changeSlider(Integer i) {
-        timeSlider.setValue(i);
-        timeSliderValue.setValue(i);
-    }
-    private void checkSyncState()
-    {
-        if(timeSlider.getValue()==new Integer(timeSliderValue.getValue().toString()))
-            sync = true;
-        else
-            sync = false;
-    }
+ 
 }
