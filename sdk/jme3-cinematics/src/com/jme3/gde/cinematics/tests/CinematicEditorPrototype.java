@@ -6,13 +6,22 @@
 
 package com.jme3.gde.cinematics.tests;
 
+import com.jme3.animation.AnimationFactory;
+import com.jme3.animation.LoopMode;
 import com.jme3.cinematic.Cinematic;
+import com.jme3.cinematic.events.AnimationEvent;
+import com.jme3.gde.core.scene.SceneApplication;
+import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Vector;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import javax.vecmath.Vector3d;
 
 /**
  *
@@ -20,13 +29,23 @@ import javax.swing.table.TableColumnModel;
  */
 public class CinematicEditorPrototype extends javax.swing.JFrame {
     
-    private Cinematic cinematic;
+    private Cinematic cinematic ;
     private String cinematicName;
     private  FixedColumnTable fct;
-    
+    private Timeline timelineData = new Timeline();
+    private Node rootNode;
+
+    public Node getRootNode() {
+        return rootNode;
+    }
+
+    public void setRootNode(Node rootNode) {
+        this.rootNode = rootNode;
+    }
     Integer durationValue = 30;
     Integer currentFrameValue = 0;
     boolean loaded = false;
+    
 
     public String getCinematicName() {
         return cinematicName;
@@ -86,14 +105,112 @@ public class CinematicEditorPrototype extends javax.swing.JFrame {
         System.out.println("success");
         timeline.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         
-       fct = new FixedColumnTable(0,timelineContainer);
+       fct = new FixedColumnTable(1,timelineContainer);
     }
-    public void addSpatialObject(Spatial spat){
+    
+    
+    
+    public void addSpatialObject(Spatial spat,String name){
+        
+        SpatialLayer layer = new SpatialLayer();
+        layer.setSpat(spat);
+        layer.setLayerName(name);
+        timelineData.add(layer);
+        refreshTimeline();
+        
+        
+        /*System.out.println("Editor : Adding spatial : "+ name);
         DefaultTableModel model = (DefaultTableModel)timeline.getModel();
         model.addRow(new Vector<Object>());
-        System.out.println("Cinematic Editor: New Row created");
-        DefaultTableModel fixedModel =  (DefaultTableModel) fct.getFixedTable().getModel();
         
+        System.out.println("Cinematic Editor: New Row created");
+        JTable fixedTable = fct.getFixedTable();
+        DefaultTableModel fixedModel =  (DefaultTableModel) fixedTable.getModel();
+        fixedTable.setValueAt(name,fixedModel.getRowCount()-1,0);*/
+        
+        
+        
+    }
+    
+    public boolean animateEnabled ()
+    {
+        return animationSwitch.isSelected();
+    }
+    
+   
+    
+     private void refreshTimeline() {
+        
+         DefaultTableModel model = (DefaultTableModel)timeline.getModel();
+         DefaultTableModel fixed = (DefaultTableModel)fct.getFixedTable().getModel();
+         //clear
+         for(int i=0;i<timeline.getRowCount();i++)
+         model.removeRow(i);
+         // add rows
+         for(int i=0;i<timelineData.size();i++)
+         {
+             System.out.println("running for layer : " + (i+1));
+             SpatialLayer layer = timelineData.get(i);
+             Vector<String> rowData = new Vector<String>();
+             
+             for( int j=0;j<timeline.getColumnCount();j++)
+             {
+                 if(layer.getMotionKeyFrames().containsKey(j))
+                    rowData.add("M");
+                 else
+                     rowData.add("");
+                 System.out.println("Value Added to column : " + rowData.get(j));
+             }
+             model.addRow(rowData);
+             fixed.setValueAt(layer.getLayerName(),i,0);
+         }
+    }
+     
+    public void moveSpatial()
+    {
+        if(loaded && animateEnabled())
+        {
+            SpatialLayer layer = timelineData.get(timeline.getSelectedRow());
+            Spatial spat = layer.getSpat();
+            MotionKeyframe motionKeyframe ;
+            if(!layer.getMotionKeyFrames().containsKey(currentFrameValue))
+            {
+                System.out.println("Creating new keyframe at " + currentFrameValue);
+                motionKeyframe = new MotionKeyframe();
+                timeline.setValueAt("m",timeline.getSelectedRow() ,currentFrameValue-1 );
+                layer.getMotionKeyFrames().put(currentFrameValue, motionKeyframe);
+            }
+            else{
+                System.out.println("Keyframe already exists at " + currentFrameValue);
+                motionKeyframe = layer.getMotionKeyFrames().get(currentFrameValue);
+            }
+            motionKeyframe.setRotation(spat.getLocalRotation());
+            motionKeyframe.setScale(spat.getLocalScale());
+            motionKeyframe.setTranslation(spat.getLocalTranslation());
+            
+            
+        }
+    }
+    
+    
+    public void removeMotionKeyframe(){
+        SpatialLayer layer = timelineData.get(timeline.getSelectedRow());
+        timeline.getModel().setValueAt(" ", timeline.getSelectedRow(),currentFrameValue);
+        System.out.println("Removing keyframe" + currentFrameValue);
+        layer.getMotionKeyFrames().remove(currentFrameValue);
+        
+    }
+    
+    public void buildPreview(){
+        cinematic = new Cinematic(rootNode, durationValue);
+        for(SpatialLayer layer: timelineData){
+            Spatial spat = layer.getSpat();
+            System.out.println("Sending request to build animation");
+            layer.buildAnimation(durationValue);
+            System.out.println("Adding cinematic animation event");
+            cinematic.addCinematicEvent(0, new AnimationEvent(spat, layer.getLayerName()+ "_animation", LoopMode.DontLoop));
+            SceneApplication.getApplication().getStateManager().attach(cinematic);
+        }
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -106,7 +223,7 @@ public class CinematicEditorPrototype extends javax.swing.JFrame {
 
         yoyo = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
-        AnimationSwitch = new javax.swing.JToggleButton();
+        animationSwitch = new javax.swing.JToggleButton();
         addKeyframe = new javax.swing.JButton();
         removeKeyFrame = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
@@ -128,11 +245,21 @@ public class CinematicEditorPrototype extends javax.swing.JFrame {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(CinematicEditorPrototype.class, "CinematicEditorPrototype.jPanel1.border.title"))); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(AnimationSwitch, org.openide.util.NbBundle.getMessage(CinematicEditorPrototype.class, "CinematicEditorPrototype.AnimationSwitch.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(animationSwitch, org.openide.util.NbBundle.getMessage(CinematicEditorPrototype.class, "CinematicEditorPrototype.animationSwitch.text")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(addKeyframe, org.openide.util.NbBundle.getMessage(CinematicEditorPrototype.class, "CinematicEditorPrototype.addKeyframe.text")); // NOI18N
+        addKeyframe.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addKeyframeActionPerformed(evt);
+            }
+        });
 
         org.openide.awt.Mnemonics.setLocalizedText(removeKeyFrame, org.openide.util.NbBundle.getMessage(CinematicEditorPrototype.class, "CinematicEditorPrototype.removeKeyFrame.text")); // NOI18N
+        removeKeyFrame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeKeyFrameActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -140,18 +267,18 @@ public class CinematicEditorPrototype extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(AnimationSwitch, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(14, 14, 14)
+                .addComponent(animationSwitch, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(addKeyframe)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(removeKeyFrame)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(removeKeyFrame, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(AnimationSwitch)
+                    .addComponent(animationSwitch)
                     .addComponent(addKeyframe)
                     .addComponent(removeKeyFrame))
                 .addGap(0, 0, Short.MAX_VALUE))
@@ -176,6 +303,11 @@ public class CinematicEditorPrototype extends javax.swing.JFrame {
         });
 
         org.openide.awt.Mnemonics.setLocalizedText(playPause, org.openide.util.NbBundle.getMessage(CinematicEditorPrototype.class, "CinematicEditorPrototype.playPause.text")); // NOI18N
+        playPause.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                playPauseActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -254,19 +386,21 @@ public class CinematicEditorPrototype extends javax.swing.JFrame {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(7, 7, 7)
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(currentFrame, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(timeSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 388, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27))
-            .addComponent(timelineContainer)
-            .addGroup(jPanel3Layout.createSequentialGroup()
                 .addComponent(jButton1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton2)
                 .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(timelineContainer, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(7, 7, 7)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(currentFrame, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(timeSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 388, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(27, 27, 27))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -282,7 +416,7 @@ public class CinematicEditorPrototype extends javax.swing.JFrame {
                         .addComponent(timeSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addComponent(timelineContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2)))
@@ -300,15 +434,18 @@ public class CinematicEditorPrototype extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(197, 197, 197)
-                .addComponent(yoyo, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(clipName, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(197, 197, 197)
+                        .addComponent(yoyo, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(clipName, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(44, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -330,12 +467,19 @@ public class CinematicEditorPrototype extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void stopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopActionPerformed
-        // TODO add your handling code here:
+        cinematic.stop();
+        SceneApplication.getApplication().getStateManager().detach(cinematic);
     }//GEN-LAST:event_stopActionPerformed
 
     private void timeSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_timeSliderStateChanged
+        if(loaded){
+        currentFrameValue = timeSlider.getValue();
         currentFrame.setValue(timeSlider.getValue());
-        
+        if(timeline.getSelectedRow()>-1){
+        SpatialLayer layer = timelineData.get(timeline.getSelectedRow());
+        layer.loadSpatialState(currentFrameValue);
+        }
+        }
     }//GEN-LAST:event_timeSliderStateChanged
 
     private void durationStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_durationStateChanged
@@ -350,7 +494,7 @@ public class CinematicEditorPrototype extends javax.swing.JFrame {
             {   
                 for(int i=durationValue;i>temp;i--)
                 {
-                    timeline.removeColumn(timeline.getColumnModel().getColumn(i));
+                    timeline.removeColumn(timeline.getColumnModel().getColumn(timeline.getColumnCount()-1));
                 }
             
             }else 
@@ -379,10 +523,16 @@ public class CinematicEditorPrototype extends javax.swing.JFrame {
     }//GEN-LAST:event_durationStateChanged
 
     private void timelineMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_timelineMousePressed
-        int selectedRow = timeline.getSelectedColumn();
+        int selectedRow = timeline.getSelectedColumn()+1;
         currentFrameValue = selectedRow;
         currentFrame.setValue(selectedRow);
         timeSlider.setValue(selectedRow);
+        System.out.println("Selected Column : " + selectedRow + "SelectedRow :" + timeline.getSelectedRow());
+        if(timeline.getSelectedRow()>-1){
+        SpatialLayer layer = timelineData.get(timeline.getSelectedRow());
+        layer.loadSpatialState(currentFrameValue);
+        }
+        
     }//GEN-LAST:event_timelineMousePressed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -398,9 +548,39 @@ public class CinematicEditorPrototype extends javax.swing.JFrame {
     }//GEN-LAST:event_clipNameActionPerformed
 
     private void currentFrameStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_currentFrameStateChanged
+        if(loaded) {
         currentFrameValue = new Integer(currentFrame.getValue().toString());
         timeSlider.setValue(currentFrameValue);
+        if(timeline.getSelectedRow()>-1){
+        SpatialLayer layer = timelineData.get(timeline.getSelectedRow());
+        layer.loadSpatialState(currentFrameValue);
+        }
+        }
     }//GEN-LAST:event_currentFrameStateChanged
+
+    private void addKeyframeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addKeyframeActionPerformed
+        moveSpatial();
+    }//GEN-LAST:event_addKeyframeActionPerformed
+
+    private void removeKeyFrameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeKeyFrameActionPerformed
+        removeMotionKeyframe();
+    }//GEN-LAST:event_removeKeyFrameActionPerformed
+
+    private void playPauseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playPauseActionPerformed
+        
+        if(playPause.isSelected())
+        {
+            if(!SceneApplication.getApplication().getStateManager().hasState(cinematic)) {
+                System.out.println("Building Preview");
+                buildPreview();
+            }
+            System.out.println("Playing Cinematic");
+            cinematic.play();
+        }
+        else {
+            cinematic.pause();
+        }
+    }//GEN-LAST:event_playPauseActionPerformed
 
     /**
      * @param args the command line arguments
@@ -438,8 +618,8 @@ public class CinematicEditorPrototype extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JToggleButton AnimationSwitch;
     private javax.swing.JButton addKeyframe;
+    private javax.swing.JToggleButton animationSwitch;
     private javax.swing.JTextField clipName;
     private javax.swing.JSpinner currentFrame;
     private javax.swing.JSpinner duration;
@@ -458,6 +638,8 @@ public class CinematicEditorPrototype extends javax.swing.JFrame {
     private javax.swing.JScrollPane timelineContainer;
     private javax.swing.JLabel yoyo;
     // End of variables declaration//GEN-END:variables
+
+   
 
  
 }

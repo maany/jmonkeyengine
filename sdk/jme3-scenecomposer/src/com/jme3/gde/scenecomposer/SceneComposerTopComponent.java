@@ -724,6 +724,8 @@ private void jToggleSelectGeomActionPerformed(java.awt.event.ActionEvent evt) {/
         
         System.out.println("SceneComposer : selected element : " + cinematicLoader.getSelectedItem().toString());
         CinematicManager.getInstance().loadCinematic(cinematicLoader.getSelectedItem().toString());
+        CinematicEditorPrototype editor =  CinematicManager.getInstance().getCinematic(cinematicLoader.getSelectedItem().toString());
+        editor.setRootNode((Node)SceneApplication.getApplication().getCurrentSceneRequest().getRootNode());
         initCinematicList();
     }//GEN-LAST:event_jButton4ActionPerformed
 
@@ -739,7 +741,8 @@ private void jToggleSelectGeomActionPerformed(java.awt.event.ActionEvent evt) {/
         Spatial selected = toolController.getSelectedSpatial();
         //toolController.getRootNode().getChildren().findChild(selected.getName());
        CinematicEditorPrototype editor =  CinematicManager.getInstance().getCinematic(cinematicLoader.getSelectedItem().toString());
-       editor.addSpatialObject(selected);
+       editor.setRootNode((Node)SceneApplication.getApplication().getCurrentSceneRequest().getRootNode());
+       editor.addSpatialObject(selected,sceneInfoLabel1.getText());
         
     }//GEN-LAST:event_addToCurrentCinematicActionPerformed
 
