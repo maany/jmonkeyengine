@@ -59,7 +59,7 @@ public class SceneComposerToolController extends SceneToolController {
         SceneApplication.getApplication().enqueue(new Callable<Object>() {
 
             public Object call() throws Exception {
-                toolsNode.attachChild(nonSpatialMarkersNode);
+                toolsNode.attachChild(nonSpatialMarkersNode); 
                 return null;
             }
         });

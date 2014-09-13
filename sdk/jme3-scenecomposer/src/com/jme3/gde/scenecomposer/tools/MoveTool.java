@@ -13,6 +13,7 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import javax.swing.JOptionPane;
 import org.openide.loaders.DataObject;
 import org.openide.util.Lookup;
 
@@ -32,6 +33,7 @@ public class MoveTool extends SceneEditTool {
     private MoveManager moveManager;
 
     public MoveTool() {
+        JOptionPane.showMessageDialog(null,"thread : " + Thread.currentThread().getName());
         axisPickType = AxisMarkerPickType.axisAndPlane;
         setOverrideCameraControl(true);
 

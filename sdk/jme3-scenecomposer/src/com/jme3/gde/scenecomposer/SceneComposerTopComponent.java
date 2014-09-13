@@ -970,6 +970,8 @@ private void jToggleSelectGeomActionPerformed(java.awt.event.ActionEvent evt) {/
     }
 
     public void openScene(Spatial spat, AssetDataObject file, ProjectAssetManager manager) {
+        String threadName = Thread.currentThread().getName();
+        
         cleanupControllers();
         SceneApplication.getApplication().addSceneListener(this);
         result.addLookupListener(this);
@@ -1079,6 +1081,7 @@ private void jToggleSelectGeomActionPerformed(java.awt.event.ActionEvent evt) {/
      * SceneListener
      */
     public void sceneOpened(SceneRequest request) {
+System.out.println("***** Thread Name : " + Thread.currentThread().getName());       
         if (request.equals(sentRequest)) {
             currentRequest = request;
             if (editorController != null) {
@@ -1104,15 +1107,15 @@ private void jToggleSelectGeomActionPerformed(java.awt.event.ActionEvent evt) {/
             toolController.setCameraController(camController);
             SelectTool tool = new SelectTool();
             toolController.showEditTool(tool);
-            toolController.setShowSelection(true);
+          //  toolController.setShowSelection(true);
 
             editorController.setToolController(toolController);
-            toolController.refreshNonSpatialMarkers();
-            toolController.setCamController(camController);
-            
+           // toolController.refreshNonSpatialMarkers();
+            //toolController.setCamController(camController);
+
             editorController.setTerrainLodCamera();
             final SpatialAssetDataObject dobj = ((SpatialAssetDataObject) currentRequest.getDataObject());
-            listener = new ProjectAssetManager.ClassPathChangeListener() {
+           /* listener = new ProjectAssetManager.ClassPathChangeListener() {
 
                 public void classPathChanged(final ProjectAssetManager manager) {
                     if (dobj.isModified()) {
@@ -1160,7 +1163,7 @@ private void jToggleSelectGeomActionPerformed(java.awt.event.ActionEvent evt) {/
                     };
                     new Thread(call).start();
                 }
-            };
+            }; */
 //            currentRequest.getManager().addClassPathEventListener(listener);
         }
     }

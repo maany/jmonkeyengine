@@ -9,6 +9,7 @@ import com.jme3.gde.core.assets.BinaryModelDataObject;
 import com.jme3.scene.Spatial;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JOptionPane;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
 import org.openide.DialogDisplayer;
@@ -24,6 +25,7 @@ public final class OpenSceneComposer implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent ev) {
+        JOptionPane.showMessageDialog(null,"MIME TYPE: "+context.getPrimaryFile().getMIMEType());
         final ProjectAssetManager manager = context.getLookup().lookup(ProjectAssetManager.class);
         if (manager == null) {
             return;
